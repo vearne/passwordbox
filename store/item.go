@@ -200,6 +200,13 @@ func SearchItem(c *cli.Context) error {
 		return err
 	}
 
+	total, err := CountItems(GlobalStore.DB, keyword)
+	if err != nil {
+		slog.Error("query db error, %v", err)
+		return err
+	}
+	fmt.Println("total:", total)
+	fmt.Println("pageSize:", consts.PageSize, "currentPage:", pageId)
 	PrintItems(ConvToItems(result))
 	return nil
 }

@@ -39,7 +39,7 @@ func main() {
 			Name:    "loglevel",
 			Aliases: []string{"l"},
 			Usage:   "specify log level, optional: debug|info|warn|error",
-			Value:   "debug",
+			Value:   "info",
 		},
 	}
 	app.Commands = []*cli.Command{

@@ -99,6 +99,25 @@ func UpdateItem(db *sql.DB, item *model.SimpleItem) error {
 	return nil
 }
 
+func CountItems(db *sql.DB, keyword string) (int, error) {
+	sql := fmt.Sprintf("select count(*) from item where title like %q",
+		"%"+keyword+"%")
+
+	stmt, err := db.Prepare(sql)
+	if err != nil {
+		slog.Error("Get, %v", err)
+		return -1, err
+	}
+	defer stmt.Close()
+	var total int
+	err = stmt.QueryRow().Scan(&total)
+	if err != nil {
+		slog.Error("Get, %v", err)
+		return 0, err
+	}
+	return total, nil
+}
+
 func DeleteItem(db *sql.DB, itemId int) error {
 	tx, err := db.Begin()
 	if err != nil {
