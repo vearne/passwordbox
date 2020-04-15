@@ -121,22 +121,22 @@ func ModifyItem(c *cli.Context) error {
 	var qs = []*survey.Question{
 		{
 			Name:   "title",
-			Prompt: &survey.Input{Message: fmt.Sprintf("Please type Item's title:[%v]", detailItem.Title)},
+			Prompt: &survey.Input{Message: fmt.Sprintf("Please type Item's title:[%q]", detailItem.Title)},
 		},
 		{
 			Name:   "account",
-			Prompt: &survey.Input{Message: fmt.Sprintf("Please type Item's account:[[%v]]", detailItem.Account)},
+			Prompt: &survey.Input{Message: fmt.Sprintf("Please type Item's account:[%q]", detailItem.Account)},
 		},
 		{
 			Name: "password",
 			Prompt: &survey.Password{
-				Message: fmt.Sprintf("Please type Item's password:[%v]", password),
+				Message: fmt.Sprintf("Please type Item's password:[%q]", password),
 			},
 		},
 		{
 			Name: "comment",
 			Prompt: &survey.Input{
-				Message: fmt.Sprintf("Please type Item's comment(optional):[%v]", detailItem.Comment),
+				Message: fmt.Sprintf("Please type Item's comment(optional):[%q]", detailItem.Comment),
 			},
 		},
 	}
