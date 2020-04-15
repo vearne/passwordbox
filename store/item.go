@@ -88,9 +88,9 @@ func DelItem(c *cli.Context) error {
 	if confirmDel {
 		err = DeleteItem(GlobalStore.DB, itemId)
 		if err != nil {
-			fmt.Println("delete item %v error, %v\n", itemId, err)
+			fmt.Printf("delete item %v error, %v\n", itemId, err)
 		} else {
-			fmt.Println("delete item %v success\n", itemId)
+			fmt.Printf("delete item %v success\n", itemId)
 		}
 	}
 	// For user experience
