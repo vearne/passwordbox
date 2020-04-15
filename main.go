@@ -3,6 +3,7 @@ package main
 import (
 	"fmt"
 	"github.com/AlecAivazis/survey/v2"
+	"github.com/fatih/color"
 	"github.com/peterh/liner"
 	"github.com/urfave/cli/v2"
 	"github.com/vearne/passwordbox/args"
@@ -178,6 +179,18 @@ LOGIN:
 		os.Exit(1)
 	}
 	store.GlobalStore = db
+
+	// Even if the database name or password is wrong, sqlite3 is still successfully opened,
+	// and the error will not be reported until you actually query.
+	db.Hint, err = store.GetHint(db.DB)
+	if err != nil {
+		slog.Debug("Get Hint error, %v", err)
+		fmt.Printf("Decrypt error, Maybe DatabaseName or Password is invalid.\n")
+		os.Exit(2)
+	}
+
+	color.Red("Hint for database %v is %v",
+		db.DatabaseName, db.Hint)
 	line := liner.NewLiner()
 	defer line.Close()
 	for {

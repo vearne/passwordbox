@@ -163,3 +163,19 @@ func GetItem(db *sql.DB, itemId int) (*model.SimpleItem, error) {
 	}
 	return &item, nil
 }
+
+func GetHint(db *sql.DB) (string, error) {
+	stmt, err := db.Prepare("select hint from meta where id = ?")
+	if err != nil {
+		slog.Error("Get, %v", err)
+		return "", err
+	}
+	defer stmt.Close()
+	var hint string
+	err = stmt.QueryRow(0).Scan(&hint)
+	if err != nil {
+		slog.Error("Get, %v", err)
+		return "", err
+	}
+	return hint, nil
+}

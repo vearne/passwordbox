@@ -32,7 +32,7 @@ func EncryptAesInCFB(plaintext []byte, key []byte, iv []byte) []byte {
 	plaintext = paddingSpace(plaintext)
 	block, err := aes.NewCipher(key)
 	if err != nil {
-		panic(err)
+		return make([]byte, 0)
 	}
 
 	dst := make([]byte, len(plaintext))
@@ -44,7 +44,7 @@ func EncryptAesInCFB(plaintext []byte, key []byte, iv []byte) []byte {
 func DecryptAesInCFB(ciphertext []byte, key []byte, iv []byte) []byte {
 	block, err := aes.NewCipher(key)
 	if err != nil {
-		panic(err)
+		return make([]byte, 0)
 	}
 
 	stream := cipher.NewCFBDecrypter(block, iv)

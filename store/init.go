@@ -70,7 +70,8 @@ func OpenDatabaseStore(dataPath string, database *model.Database) (*DatabaseStor
 		slog.Error("open openDatabase error, %v", err)
 		return nil, err
 	}
-	// TODO Decrypt the entire file
+	// Decrypt the entire file
+	buff = utils.DecryptAesInCFB(buff, s.Key, []byte(s.DataBaseIV))
 	err = ioutil.WriteFile(s.TempFile, buff, 0600)
 	if err != nil {
 		slog.Error("open openDatabase error, %v", err)
@@ -126,7 +127,9 @@ func (s *DatabaseStore) Close() error {
 		return err
 	}
 
-	// TODO Encrypt the entire file
+	// Encrypt the entire file
+	// ciphertext = AES-CFB(fileConent, key, DataBaseIV)
+	buff = utils.EncryptAesInCFB(buff, s.Key, []byte(s.DataBaseIV))
 	err = ioutil.WriteFile(s.FullPath, buff, 0600)
 	if err != nil {
 		slog.Error("write disk file error, %v", err)
