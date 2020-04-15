@@ -189,8 +189,9 @@ LOGIN:
 		os.Exit(2)
 	}
 
-	color.Red("Hint for database %v is %v",
-		db.DatabaseName, db.Hint)
+	info := color.New(color.FgRed, color.BgGreen).SprintFunc()
+	fmt.Printf("Hint for database %v is %v", info(db.DatabaseName), info(db.Hint))
+
 	line := liner.NewLiner()
 	defer line.Close()
 	for {
