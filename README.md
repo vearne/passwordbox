@@ -135,11 +135,24 @@ In `passwordbox`, the filter effect is like the following SQL statement
 ```
 select * from item where title like "%keyword%"
 ```
+#### view
+view account and password as plaintext.
+```
+test1 > view -itemId 3
+--ViewItem--
++----+-------+---------+----------+---------+---------------------------+
+| ID | TITLE | ACCOUNT | PASSWORD | COMMENT |        MODIFIEDAT         |
++----+-------+---------+----------+---------+---------------------------+
+|  3 | t3    | a3      | p3       |         | 2020-04-16T10:04:47+08:00 |
++----+-------+---------+----------+---------+---------------------------+
+```
 #### quit
 **Notice:** Remember, changes will only be saved when the quit command is executed.
 
 ## Detail
 `passwordbox` use sqlite database as underlying storage, then encrypt sqlite data files.
+
+
 
 
 
