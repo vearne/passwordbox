@@ -1,6 +1,6 @@
 # passwordbox
 
-[English README](https://github.com/vearne/ratelimit/blob/master/README.md)
+[English README](https://github.com/vearne/passwordbox/blob/master/README.md)
 
 `passwordbox`是一个类似1password的密码管理工具。完全基于命令行交互执行。1password支持多端同步，而`passwordbox`是完全离线的。
 
