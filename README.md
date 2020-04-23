@@ -140,7 +140,7 @@ select * from item where title like "%keyword%"
 #### view
 view account and password as plaintext.
 ```
-test1 > view -itemId 3
+test1 > view --itemId 3
 --ViewItem--
 +----+-------+---------+----------+---------+---------------------------+
 | ID | TITLE | ACCOUNT | PASSWORD | COMMENT |        MODIFIEDAT         |
