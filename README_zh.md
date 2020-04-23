@@ -1,37 +1,38 @@
 # passwordbox
 
-[中文 README](https://github.com/vearne/ratelimit/blob/master/README_zh.md)
+[English README](https://github.com/vearne/ratelimit/blob/master/README.md)
 
-Like 1Password, passwordbox is a tool for managing passwords, but it only allows use offline.
+`passwordbox`是一个类似1password的密码管理工具。完全基于命令行交互执行。1password支持多端同步，而`passwordbox`是完全离线的。
 
-## Warning
-This program has not undergone rigorous security testing, there may be security risks, please use it with caution.
+提示：如何想要多个设备同步，可以将数据文件传到`dropbox`, 利用`dropbox`的自动同步来完成。
+
+### 内部实现细节
+首先将每个记录项加密存储在`SQLite`的数据文件中，然后再对整个数据文件进行二次加密。
 
 
+### 快速开始
 
-## Quickstart
-
-### build
+#### 编译
 ```
 make build
 ```
-### install
+#### 安装
 ```
 make install
 ```
-
-### start
+#### 启动
 ```
 pwbox --data=/Users/vearne
 ```
-I advise you set alias for `passwordbox`
+
+* --data 设置加密数据文件的存储路径
+
+建议你为`passwordbox`设置一个别名
 ```
 alias pwbox='pwbox --data=/Users/vearne'
 ```
-After the program starts, create the database according to the manual requirements. In `passwordbox`, all items store in a database.
 
-* `--data` set the data path of passwordbox
-
+程序启动以后，按照导引的要求创建数据库，所有的记录项都存储在数据库中
 ```
 ─$ ./pwbox --data /tmp/
 ---- login database ----
@@ -49,14 +50,11 @@ fullpath /tmp/6879630a7d56210d2cd2491cb99d781194689fed71d7890a8dabbcb3a678cb73
 ? Please type your password: *****
 Hint for database test is test
 ```
-
-In interactive mode, you can use the following commands.
-
-####  help 
- Get usage details of commands
-#### add
-  Add a item
-
+登录数据库成功之后，可以执行如下的命令
+##### help
+获取所有的可用命令，以及它们的用法
+##### add
+添加一个记录项
 ```
 test > add
 --AddItem--
@@ -80,7 +78,7 @@ pageSize: 20 currentPage: 1
 |  2 | google | ***     | ***      | ***     | ***        |
 +----+--------+---------+----------+---------+------------+
 ```
-#### delete
+##### delete
 ```
 test1 > delete --itemId 2
 --DeleteItem--
@@ -100,8 +98,7 @@ pageSize: 20 currentPage: 1
 |  1 |  baidu account | ***     | ***      | ***     | ***        |
 +----+----------------+---------+----------+---------+------------+
 ```
-  
-#### modify
+##### modify
 ```
 test > modify --itemId 1
 --ModifyItem--
@@ -116,9 +113,7 @@ If you don't want to make changes, you can just press Enter!
 |  1 | baidu account | baiduAccount | cbaiduAccount |         | 2020-04-15T13:17:58+08:00 |
 +----+---------------+--------------+---------------+---------+---------------------------+
 ```
-
-#### search
-
+##### search
 ```
 test > search --pageId 1 --keyword "baidu"
 --SearchItem--
@@ -129,34 +124,23 @@ pageSize: 20 currentPage: 1
 +----+-------+---------+----------+---------+------------+
 |  1 | baidu | ***     | ***      | ***     | ***        |
 +----+-------+---------+----------+---------+------------+
-```
-
-* `pageId` Records are displayed in pages, pageId is the number of page, start from 1.
-* `keyword` You can use `keyword` to filter 
-In `passwordbox`, the filter effect is like the following SQL statement
+```   
+* `pageId` 记录项是分页显示的，每页20条数据，`pageId`是页号，从1开始
+* `keyword` 可以使用`keyword`来对记录项进行过滤，效果近似如下SQL语句
 ```
 select * from item where title like "%keyword%"
 ```
-#### view
-view account and password as plaintext.
+##### view
+以明文方式查看某个记录项的账号密码等信息。
+除非执行`view`命令，否则一个记录项在内存中也是加密的。
 ```
-test1 > view -itemId 3
+test1 > view --itemId 3
 --ViewItem--
 +----+-------+---------+----------+---------+---------------------------+
 | ID | TITLE | ACCOUNT | PASSWORD | COMMENT |        MODIFIEDAT         |
 +----+-------+---------+----------+---------+---------------------------+
-|  3 | t3    | a3      | p3       |         | 2020-04-16T10:04:47+08:00 |
+|  3 | baidu    | a3      | p3       |         | 2020-04-16T10:04:47+08:00 |
 +----+-------+---------+----------+---------+---------------------------+
 ```
-#### quit
-**Notice:** Remember, changes will only be saved when the quit command is executed.
-
-## Detail
-`passwordbox` use sqlite database as underlying storage, then encrypt sqlite data files.
-
-
-
-
-
-
-
+##### quit
+**注意** 记住所有修改（CRUD）只有在执行`quit`命令时，才会被持久化到磁盘上。
