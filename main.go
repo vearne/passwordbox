@@ -91,7 +91,7 @@ func main() {
 		},
 		{
 			Name:      "search",
-			Usage:     "search [-pageId <pageId>] [-keyword <keyword>s]",
+			Usage:     "search [-pageId <pageId>] [-keyword <keyword>]",
 			UsageText: "pageId/keyword is optional.",
 			Action:    store.SearchItem,
 			Flags: []cli.Flag{

@@ -1,7 +1,9 @@
 package log
 
 import (
+	"io"
 	"log"
+	"os"
 )
 
 const (
@@ -24,6 +26,14 @@ func init() {
 	LogMap["warn"] = WarnLevel
 	LogMap["error"] = ErrorLevel
 
+}
+
+func SetLevel(loglevel int) {
+	Level = loglevel
+}
+
+func SetOutput(w io.Writer) {
+	log.SetOutput(w)
 }
 
 func Debug(format string, v ...interface{}) {
@@ -54,4 +64,5 @@ func Fatal(format string, v ...interface{}) {
 	if Level <= FatalLevel {
 		log.Printf("[fatal] "+format+"\n", v...)
 	}
+	os.Exit(1)
 }
