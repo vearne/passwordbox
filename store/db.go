@@ -3,8 +3,8 @@ package store
 import (
 	"database/sql"
 	"fmt"
-	slog "github.com/vearne/passwordbox/log"
 	"github.com/vearne/passwordbox/model"
+	slog "github.com/vearne/simplelog"
 )
 
 func CreateTable(db *sql.DB) error {

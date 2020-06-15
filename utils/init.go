@@ -5,7 +5,7 @@ import (
 	"crypto/rand"
 	"crypto/sha256"
 	"fmt"
-	slog "github.com/vearne/passwordbox/log"
+	slog "github.com/vearne/simplelog"
 	"io"
 	"os"
 )

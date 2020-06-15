@@ -9,4 +9,5 @@ require (
 	github.com/olekukonko/tablewriter v0.0.4
 	github.com/peterh/liner v1.2.0
 	github.com/urfave/cli/v2 v2.2.0
+	github.com/vearne/simplelog v0.0.0-20200527094239-692fca69e8b1
 )

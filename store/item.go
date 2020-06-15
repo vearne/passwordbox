@@ -12,9 +12,9 @@ import (
 	"github.com/urfave/cli/v2"
 	"github.com/vearne/passwordbox/consts"
 
-	slog "github.com/vearne/passwordbox/log"
 	"github.com/vearne/passwordbox/model"
 	"github.com/vearne/passwordbox/utils"
+	slog "github.com/vearne/simplelog"
 	"os"
 	"strconv"
 	"time"
