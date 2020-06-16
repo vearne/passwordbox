@@ -168,6 +168,13 @@ func MainLogic(c *cli.Context) error {
 				slog.Fatal("can't parse oss config file, %v", err)
 			}
 			sc.GlobalOSS = &oss
+		case "oss":
+			oss := sc.AliOSS{}
+			err := viper.Unmarshal(&oss)
+			if err != nil {
+				slog.Fatal("can't parse oss config file, %v", err)
+			}
+			sc.GlobalOSS = &oss
 		default:
 			slog.Fatal("Unsupport Cloud service providers")
 		}
