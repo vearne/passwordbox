@@ -2,7 +2,7 @@
 
 [中文 README](https://github.com/vearne/passwordbox/blob/master/README.md)
 
-Like 1Password, passwordbox is a tool for managing passwords, but it only allows use offline.
+Like 1Password, passwordbox is a tool for managing passwords.
 
 ## Warning
 This program has not undergone rigorous security testing, there may be security risks, please use it with caution.

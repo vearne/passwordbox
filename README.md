@@ -2,9 +2,7 @@
 
 [English README](https://github.com/vearne/passwordbox/blob/master/README_en.md)
 
-`passwordbox`是一个类似1password的密码管理工具。完全基于命令行交互执行。1password支持多端同步，而`passwordbox`是完全离线的。
-
-提示：如何想要多个设备同步，可以将数据文件传到`dropbox`, 利用`dropbox`的自动同步来完成。
+`passwordbox`是一个类似1password的密码管理工具。完全基于命令行交互执行。
 
 ### 内部实现细节
 首先将每个记录项加密存储在`SQLite`的数据文件中，然后再对整个数据文件进行二次加密。
