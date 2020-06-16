@@ -48,7 +48,7 @@ pwbox --data=/Users/vearne --oss=/directory/qingstor.yaml
 ```
 pwbox --data=/Users/vearne --oss=/directory/oss.yaml
 ```
-* --oss Object store configuration file
+* --oss Object store configuration file (optional)
 
 ##### Notice: 
 Pwbox identifies the cloud vendor to which the object store belongs by the name of the configuration file.   

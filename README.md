@@ -43,7 +43,7 @@ pwbox --data=/Users/vearne --oss=/directory/qingstor.yaml
 ```
 pwbox --data=/Users/vearne --oss=/directory/oss.yaml
 ```
-* --oss 对象存储的配置文件
+* --oss 对象存储的配置文件 (可选)
 
 ##### 注意: 
 pwbox是通过配置文件的名称来识别对象存储所属的云厂商，所以配置文件的名称是固定的
