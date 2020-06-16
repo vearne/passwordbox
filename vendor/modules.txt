@@ -6,8 +6,23 @@ github.com/AlecAivazis/survey/v2/terminal
 github.com/cpuguy83/go-md2man/v2/md2man
 # github.com/fatih/color v1.9.0
 github.com/fatih/color
+# github.com/fsnotify/fsnotify v1.4.7
+github.com/fsnotify/fsnotify
+# github.com/hashicorp/hcl v1.0.0
+github.com/hashicorp/hcl
+github.com/hashicorp/hcl/hcl/ast
+github.com/hashicorp/hcl/hcl/parser
+github.com/hashicorp/hcl/hcl/printer
+github.com/hashicorp/hcl/hcl/scanner
+github.com/hashicorp/hcl/hcl/strconv
+github.com/hashicorp/hcl/hcl/token
+github.com/hashicorp/hcl/json/parser
+github.com/hashicorp/hcl/json/scanner
+github.com/hashicorp/hcl/json/token
 # github.com/kballard/go-shellquote v0.0.0-20180428030007-95032a82bc51
 github.com/kballard/go-shellquote
+# github.com/magiconair/properties v1.8.1
+github.com/magiconair/properties
 # github.com/mattn/go-colorable v0.1.4
 github.com/mattn/go-colorable
 # github.com/mattn/go-isatty v0.0.11
@@ -18,18 +33,60 @@ github.com/mattn/go-runewidth
 github.com/mattn/go-sqlite3
 # github.com/mgutz/ansi v0.0.0-20170206155736-9520e82c474b
 github.com/mgutz/ansi
+# github.com/mitchellh/mapstructure v1.1.2
+github.com/mitchellh/mapstructure
 # github.com/olekukonko/tablewriter v0.0.4
 github.com/olekukonko/tablewriter
+# github.com/pelletier/go-toml v1.2.0
+github.com/pelletier/go-toml
+# github.com/pengsrc/go-shared v0.2.0
+github.com/pengsrc/go-shared/buffer
+github.com/pengsrc/go-shared/check
+github.com/pengsrc/go-shared/convert
+github.com/pengsrc/go-shared/log
+github.com/pengsrc/go-shared/reopen
 # github.com/peterh/liner v1.2.0
 github.com/peterh/liner
 # github.com/russross/blackfriday/v2 v2.0.1
 github.com/russross/blackfriday/v2
 # github.com/shurcooL/sanitized_anchor_name v1.0.0
 github.com/shurcooL/sanitized_anchor_name
+# github.com/spf13/afero v1.1.2
+github.com/spf13/afero
+github.com/spf13/afero/mem
+# github.com/spf13/cast v1.3.0
+github.com/spf13/cast
+# github.com/spf13/jwalterweatherman v1.0.0
+github.com/spf13/jwalterweatherman
+# github.com/spf13/pflag v1.0.3
+github.com/spf13/pflag
+# github.com/spf13/viper v1.7.0
+github.com/spf13/viper
+# github.com/subosito/gotenv v1.2.0
+github.com/subosito/gotenv
 # github.com/urfave/cli/v2 v2.2.0
 github.com/urfave/cli/v2
+# github.com/vearne/simplelog v0.0.0-20200527094239-692fca69e8b1
+github.com/vearne/simplelog
+# github.com/yunify/qingstor-sdk-go v2.2.15+incompatible
+github.com/yunify/qingstor-sdk-go
+github.com/yunify/qingstor-sdk-go/config
+github.com/yunify/qingstor-sdk-go/logger
+github.com/yunify/qingstor-sdk-go/request
+github.com/yunify/qingstor-sdk-go/request/builder
+github.com/yunify/qingstor-sdk-go/request/data
+github.com/yunify/qingstor-sdk-go/request/errors
+github.com/yunify/qingstor-sdk-go/request/signer
+github.com/yunify/qingstor-sdk-go/request/unpacker
+github.com/yunify/qingstor-sdk-go/service
+github.com/yunify/qingstor-sdk-go/utils
 # golang.org/x/sys v0.0.0-20191026070338-33540a1f6037
 golang.org/x/sys/unix
-# golang.org/x/text v0.3.0
+# golang.org/x/text v0.3.2
 golang.org/x/text/transform
+golang.org/x/text/unicode/norm
 golang.org/x/text/width
+# gopkg.in/ini.v1 v1.51.0
+gopkg.in/ini.v1
+# gopkg.in/yaml.v2 v2.2.4
+gopkg.in/yaml.v2

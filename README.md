@@ -155,7 +155,18 @@ test1 > view --itemId 3
 `passwordbox` use sqlite database as underlying storage, then encrypt sqlite data files.
 
 
+### oss config template
 
+#### 1. QingCloud
+`qingstor.yaml`
+
+```
+access_key: xxxx
+secret_key: xxxxx
+bucket_name: xxxxx
+zone: sh1a
+dir_path: pwbox
+```
 
 
 

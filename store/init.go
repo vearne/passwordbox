@@ -22,6 +22,7 @@ type DatabaseStore struct {
 	DatabaseName string
 	Hint         string
 	Items        []*model.SimpleItem
+	FileName     string
 	FullPath     string
 	Key          []byte
 	DataBaseIV   string
@@ -35,6 +36,7 @@ func NewDatabaseStore(dataPath string, database *model.Database) *DatabaseStore 
 	fullpath := filepath.Join(dataPath, filename)
 
 	s := DatabaseStore{}
+	s.FileName = filename
 	s.FullPath = fullpath
 	s.DatabaseName = database.Name
 	s.DataBaseIV = filename[0:aes.BlockSize]
@@ -51,6 +53,7 @@ func OpenDatabaseStore(dataPath string, database *model.Database) (*DatabaseStor
 	fullpath := filepath.Join(dataPath, filename)
 
 	s := DatabaseStore{}
+	s.FileName = filename
 	s.FullPath = fullpath
 	s.DatabaseName = database.Name
 	s.DataBaseIV = filename[0:aes.BlockSize]

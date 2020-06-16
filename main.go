@@ -5,10 +5,13 @@ import (
 	"github.com/AlecAivazis/survey/v2"
 	"github.com/fatih/color"
 	"github.com/peterh/liner"
+	"github.com/spf13/viper"
 	"github.com/urfave/cli/v2"
 	"github.com/vearne/passwordbox/args"
 	"github.com/vearne/passwordbox/consts"
 	"github.com/vearne/passwordbox/model"
+	"github.com/vearne/passwordbox/resource"
+	"github.com/vearne/passwordbox/sc"
 	"github.com/vearne/passwordbox/store"
 	"github.com/vearne/passwordbox/utils"
 	slog "github.com/vearne/simplelog"
@@ -40,6 +43,13 @@ func main() {
 			Aliases: []string{"l"},
 			Usage:   "specify log level, optional: debug|info|warn|error",
 			Value:   "info",
+		},
+		&cli.StringFlag{
+			Name: "oss",
+			Usage: `--oss /etc/qingstor.yaml
+					specify Object Storage Service address, 
+					Note: pwbox identify cloud services by configuration file name.
+					optional: qingstor.yaml`,
 		},
 	}
 	app.Commands = []*cli.Command{
@@ -138,6 +148,39 @@ func MainLogic(c *cli.Context) error {
 		return cli.Exit("Data directory is not directory.", -1)
 	}
 
+	// datapath
+	resource.DataPath = dataPath
+
+	ossConfigFile := c.String("oss")
+	if len(ossConfigFile) > 0 {
+		viper.SetConfigFile(ossConfigFile)
+		if err := viper.ReadInConfig(); err == nil {
+			slog.Info("Using config file: %v", viper.ConfigFileUsed())
+		} else {
+			slog.Fatal("can't find config file, %v", err)
+		}
+
+		switch extractType(ossConfigFile) {
+		case "qingstor":
+			oss := sc.QingStor{}
+			err := viper.Unmarshal(&oss)
+			if err != nil {
+				slog.Fatal("can't parse oss config file, %v", err)
+			}
+			sc.GlobalOSS = &oss
+		default:
+			slog.Fatal("Unsupport Cloud service providers")
+		}
+
+		// init object storage service
+		err := sc.GlobalOSS.Init()
+		if err != nil {
+			slog.Fatal("GlobalOSS init error:%v", err)
+		}
+		// sync from oss
+		sc.CompareAndDownloadAll()
+	}
+
 LOGIN:
 	fmt.Println("---- login database ----")
 	database := ""
@@ -194,6 +237,7 @@ LOGIN:
 
 	line := liner.NewLiner()
 	defer line.Close()
+
 	for {
 		msg := `
 Tip: Up and down arrow keys can switch historical commands.
@@ -250,8 +294,9 @@ func createDatabase(dataPath string) error {
 			Validate: survey.Required,
 		},
 		{
-			Name:   "hint",
-			Prompt: &survey.Input{Message: "Please type hint[optional]:"},
+			Name:     "hint",
+			Prompt:   &survey.Input{Message: "Please type hint:"},
+			Validate: survey.Required,
 		},
 	}
 	answers := model.Database{}
@@ -276,4 +321,12 @@ func createDatabase(dataPath string) error {
 	}
 
 	return nil
+}
+
+// /abc/def/qingstor.yaml
+func extractType(localfilepath string) string {
+	//itemList := strings.Split(localfilepath, "/")
+	_, filename := filepath.Split(localfilepath)
+	itemList := strings.Split(filename, ".")
+	return itemList[0]
 }

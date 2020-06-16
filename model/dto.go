@@ -18,5 +18,5 @@ type SimpleItem struct {
 type Database struct {
 	Name     string `survey:"name"`
 	Password string `survey:"password"`
-	Hint     string `survey:"comment"`
+	Hint     string `survey:"hint"`
 }

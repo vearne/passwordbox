@@ -11,6 +11,7 @@ import (
 	"github.com/olekukonko/tablewriter"
 	"github.com/urfave/cli/v2"
 	"github.com/vearne/passwordbox/consts"
+	"github.com/vearne/passwordbox/sc"
 
 	"github.com/vearne/passwordbox/model"
 	"github.com/vearne/passwordbox/utils"
@@ -214,6 +215,7 @@ func SearchItem(c *cli.Context) error {
 func Quit(c *cli.Context) error {
 	fmt.Println("Save and Quit")
 	GlobalStore.Close()
+	sc.CompareAndUpload(GlobalStore.FileName, GlobalStore.FullPath)
 	return nil
 }
 
