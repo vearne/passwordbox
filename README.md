@@ -32,6 +32,25 @@ After the program starts, create the database according to the manual requiremen
 
 * `--data` set the data path of passwordbox
 
+#### Synchronize to object storage
+
+If you want data files to be Shared across multiple devices, 
+you can also configure object storage.
+
+##### Currently supported
+
+* [QingCloud](https://www.qingcloud.com/products/qingstor/)  `qingstor.yaml`
+
+```
+pwbox --data=/Users/vearne --oss=/directory/qingstor.yaml
+```
+* --oss Object store configuration file
+
+##### Notice: 
+Pwbox identifies the cloud vendor to which the object store belongs by the name of the configuration file.   
+So the name of the configuration file is fixed.
+
+
 ```
 ─$ ./pwbox --data /tmp/
 ---- login database ----
