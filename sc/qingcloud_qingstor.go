@@ -45,7 +45,7 @@ func (s *QingStor) UploadFile(key string, filepath string) bool {
 	var file *os.File
 	file, err := os.Open(filepath)
 	if err != nil {
-		slog.Error("UploadFile--open file error,filepath:%v", filepath)
+		slog.Error("QingStor.UploadFile--open file error,filepath:%v", filepath)
 		return false
 	}
 	defer file.Close()
@@ -59,7 +59,7 @@ func (s *QingStor) UploadFile(key string, filepath string) bool {
 		return true
 	} else if err != nil {
 		// Example: QingStor Error: StatusCode 403, Code "permission_denied"...
-		slog.Error("UploadFile--error,filepath:%v", filepath)
+		slog.Error("QingStor.UploadFile--error,filepath:%v", filepath)
 		return false
 	}
 	return false
@@ -77,7 +77,7 @@ func (s *QingStor) ListKeys(prefix string) ([]string, error) {
 	return result, nil
 }
 
-func (s *QingStor) DownloadFile(key string, filepath string) bool {
+func (s *QingStor) DownloadFile(key string, logFilePath string) bool {
 	getOutput, err := s.Bucket.GetObject(key,
 		&qs.GetObjectInput{},
 	)
@@ -86,7 +86,7 @@ func (s *QingStor) DownloadFile(key string, filepath string) bool {
 		return false
 	}
 	defer getOutput.Close()
-	f, err := os.OpenFile(filepath, os.O_CREATE|os.O_WRONLY, 0600)
+	f, err := os.OpenFile(logFilePath, os.O_CREATE|os.O_WRONLY, 0600)
 	if err != nil {
 		slog.Error("DownloadFile-open file error, %v", err)
 		return false
