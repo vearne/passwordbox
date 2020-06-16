@@ -51,8 +51,9 @@ pwbox --data=/Users/vearne --oss=/directory/oss.yaml
 * --oss Object store configuration file (optional)
 
 ##### Notice: 
-Pwbox identifies the cloud vendor to which the object store belongs by the name of the configuration file.   
+1）Pwbox identifies the cloud vendor to which the object store belongs by the name of the configuration file.   
 So the name of the configuration file is fixed.
+2) For security, make sure that the Bucket where the object is stored is private (read and write using the key only)
 
 
 ```
