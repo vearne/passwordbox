@@ -32,6 +32,21 @@ pwbox --data=/Users/vearne
 alias pwbox='pwbox --data=/Users/vearne'
 ```
 
+#### 同步到对象存储
+如果你希望数据文件在多个设备中共享，你还可以通过配置对象存储来实现。    
+##### 目前已支持
+
+* [青云](https://www.qingcloud.com/products/qingstor/)  `qingstor.yaml`
+
+```
+pwbox --data=/Users/vearne --oss=/directory/qingstor.yaml
+```
+* --oss 对象存储的配置文件
+
+##### 注意: 
+pwbox是通过配置文件的名称来识别对象存储所属的云厂商，所以配置文件的名称是固定的
+
+
 程序启动以后，按照导引的要求创建数据库，所有的记录项都存储在数据库中
 ```
 ─$ ./pwbox --data /tmp/
@@ -144,3 +159,19 @@ test1 > view --itemId 3
 ```
 ##### quit
 **注意** 记住所有修改（CRUD）只有在执行`quit`命令时，才会被持久化到磁盘上。
+
+
+### 对象存储配置文件模板
+
+#### 1. 青云 QingCloud
+
+`qingstor.yaml`
+
+```
+access_key: xxxx
+secret_key: xxxxx
+bucket_name: xxxxx
+zone: sh1a
+dir_path: pwbox
+```
+
