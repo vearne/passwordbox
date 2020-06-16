@@ -21,7 +21,7 @@ import (
 )
 
 var (
-	Version = "v0.0.5"
+	Version = "v0.0.6"
 )
 
 func main() {
@@ -160,7 +160,8 @@ func MainLogic(c *cli.Context) error {
 			slog.Fatal("can't find config file, %v", err)
 		}
 
-		switch extractType(ossConfigFile) {
+		ossType := extractType(ossConfigFile)
+		switch ossType {
 		case "qingstor":
 			oss := sc.QingStor{}
 			err := viper.Unmarshal(&oss)
@@ -168,8 +169,15 @@ func MainLogic(c *cli.Context) error {
 				slog.Fatal("can't parse oss config file, %v", err)
 			}
 			sc.GlobalOSS = &oss
+		case "oss":
+			oss := sc.AliOSS{}
+			err := viper.Unmarshal(&oss)
+			if err != nil {
+				slog.Fatal("can't parse oss config file, %v", err)
+			}
+			sc.GlobalOSS = &oss
 		default:
-			slog.Fatal("Unsupport Cloud service providers")
+			slog.Fatal("Unsupport Cloud service providers, %v", ossType)
 		}
 
 		// init object storage service
@@ -325,7 +333,6 @@ func createDatabase(dataPath string) error {
 
 // /abc/def/qingstor.yaml
 func extractType(localfilepath string) string {
-	//itemList := strings.Split(localfilepath, "/")
 	_, filename := filepath.Split(localfilepath)
 	itemList := strings.Split(filename, ".")
 	return itemList[0]

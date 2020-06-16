@@ -13,8 +13,8 @@ var (
 type ObjectStorage interface {
 	Init() error
 	GetDirPath() string
-	UploadFile(key string, filepath string) bool
-	DownloadFile(key string, filepath string) bool
+	UploadFile(key string, localFilePath string) bool
+	DownloadFile(key string, localFilePath string) bool
 	// If file in oss is newer than localfile?
 	Compare(key string, localFilePath string) (bool, error)
 	ListKeys(prefix string) ([]string, error)

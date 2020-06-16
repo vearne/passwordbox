@@ -4,6 +4,7 @@ go 1.13
 
 require (
 	github.com/AlecAivazis/survey/v2 v2.0.7
+	github.com/aliyun/aliyun-oss-go-sdk v2.1.1+incompatible
 	github.com/fatih/color v1.9.0
 	github.com/imroc/req v0.3.0 // indirect
 	github.com/mattn/go-sqlite3 v2.0.3+incompatible
