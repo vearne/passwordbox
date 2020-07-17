@@ -246,14 +246,17 @@ LOGIN:
 	line := liner.NewLiner()
 	defer line.Close()
 
-	for {
-		msg := `
+	msg := `
 Tip: Up and down arrow keys can switch historical commands.
 Tip: Ctrl + A jumps to the beginning of the command.
 Tip: Ctrl + E jumps to the end of the command.
 Tip: Type help for help.
 		`
-		fmt.Println(msg)
+	fmt.Println(msg)
+	// For user experience
+	store.SearchItem(c)
+
+	for {
 		commandLine, err := line.Prompt(store.GlobalStore.DatabaseName + " > ")
 		if err != nil {
 			slog.Error("commandLine:%v, error:%v", commandLine, err)
