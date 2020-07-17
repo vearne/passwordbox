@@ -167,9 +167,13 @@ func ModifyItem(c *cli.Context) error {
 		dirty = true
 	}
 
-	PrintItems([]*model.DetailItem{detailItem})
 	if dirty {
+		detailItem.ModifiedAt = time.Now().Format(time.RFC3339)
+		PrintItems([]*model.DetailItem{detailItem})
 		UpdateItem(GlobalStore.DB, ChangeToSimpleItem(detailItem))
+	} else {
+		color.Yellow("The item remains the same as before.")
+		PrintItems([]*model.DetailItem{detailItem})
 	}
 	return nil
 }
