@@ -84,7 +84,8 @@ func UpdateItem(db *sql.DB, item *model.SimpleItem) error {
 		slog.Error("UpdateItem, %v", err)
 		return err
 	}
-	stmt, err := tx.Prepare("update item set title = ?, IVCiphertext = ? where id = ?")
+	sql := "update item set title = ?, IVCiphertext = ? where id = ?"
+	stmt, err := tx.Prepare(sql)
 	if err != nil {
 		slog.Error("UpdateItem, %v", err)
 		return err
