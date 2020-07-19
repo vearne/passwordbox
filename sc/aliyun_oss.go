@@ -54,8 +54,8 @@ func (s *AliOSS) ListKeys(prefix string) ([]string, error) {
 	return result, nil
 }
 
-func (s *AliOSS) DownloadFile(key string, logFilePath string) bool {
-	err := s.Bucket.GetObjectToFile(key, logFilePath)
+func (s *AliOSS) DownloadFile(key string, localFilePath string) bool {
+	err := s.Bucket.GetObjectToFile(key, localFilePath)
 	if err != nil {
 		slog.Error("AliOSS.DownloadFile, error:%v", err)
 		return false
@@ -86,9 +86,9 @@ func (s *AliOSS) Compare(key string, localFilePath string) (bool, error) {
 	if err != nil {
 		return true, nil
 	}
-	localSize := info.Size()
+
 	localLastModified := info.ModTime()
-	if localSize != obj.Size && obj.LastModified.After(localLastModified) {
+	if obj.LastModified.Unix() > localLastModified.Unix() {
 		return true, nil
 	}
 	return false, nil

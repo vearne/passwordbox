@@ -28,6 +28,7 @@ type DatabaseStore struct {
 	DataBaseIV   string
 	DB           *sql.DB
 	TempFile     string
+	Dirty        bool
 }
 
 func NewDatabaseStore(dataPath string, database *model.Database) *DatabaseStore {
@@ -53,6 +54,7 @@ func OpenDatabaseStore(dataPath string, database *model.Database) (*DatabaseStor
 	fullpath := filepath.Join(dataPath, filename)
 
 	s := DatabaseStore{}
+	s.Dirty = false
 	s.FileName = filename
 	s.FullPath = fullpath
 	s.DatabaseName = database.Name

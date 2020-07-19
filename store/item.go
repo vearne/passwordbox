@@ -64,6 +64,7 @@ func AddItem(c *cli.Context) error {
 
 	InsertItem(GlobalStore.DB, ChangeToSimpleItem(&answers))
 
+	GlobalStore.Dirty = true
 	fmt.Println("AddItem-save to file")
 	SearchItem(c)
 	return nil
@@ -87,6 +88,7 @@ func DelItem(c *cli.Context) error {
 	}
 	survey.AskOne(prompt, &confirmDel)
 	if confirmDel {
+		GlobalStore.Dirty = true
 		err = DeleteItem(GlobalStore.DB, itemId)
 		if err != nil {
 			fmt.Printf("delete item %v error, %v\n", itemId, err)
@@ -94,6 +96,7 @@ func DelItem(c *cli.Context) error {
 			fmt.Printf("delete item %v success\n", itemId)
 		}
 	}
+
 	// For user experience
 	SearchItem(c)
 	return nil
@@ -168,6 +171,7 @@ func ModifyItem(c *cli.Context) error {
 	}
 
 	if dirty {
+		GlobalStore.Dirty = true
 		detailItem.ModifiedAt = time.Now().Format(time.RFC3339)
 		PrintItems([]*model.DetailItem{detailItem})
 		UpdateItem(GlobalStore.DB, ChangeToSimpleItem(detailItem))
@@ -218,8 +222,11 @@ func SearchItem(c *cli.Context) error {
 
 func Quit(c *cli.Context) error {
 	fmt.Println("Save and Quit")
-	GlobalStore.Close()
-	sc.CompareAndUpload(GlobalStore.FileName, GlobalStore.FullPath)
+
+	if GlobalStore.Dirty {
+		GlobalStore.Close()
+		sc.CompareAndUpload(GlobalStore.FileName, GlobalStore.FullPath)
+	}
 	return nil
 }
 

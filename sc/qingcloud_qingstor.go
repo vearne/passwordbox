@@ -77,7 +77,7 @@ func (s *QingStor) ListKeys(prefix string) ([]string, error) {
 	return result, nil
 }
 
-func (s *QingStor) DownloadFile(key string, logFilePath string) bool {
+func (s *QingStor) DownloadFile(key string, localFilePath string) bool {
 	getOutput, err := s.Bucket.GetObject(key,
 		&qs.GetObjectInput{},
 	)
@@ -86,7 +86,7 @@ func (s *QingStor) DownloadFile(key string, logFilePath string) bool {
 		return false
 	}
 	defer getOutput.Close()
-	f, err := os.OpenFile(logFilePath, os.O_CREATE|os.O_WRONLY, 0600)
+	f, err := os.OpenFile(localFilePath, os.O_CREATE|os.O_WRONLY, 0600)
 	if err != nil {
 		slog.Error("DownloadFile-open file error, %v", err)
 		return false
@@ -112,12 +112,15 @@ func (s *QingStor) Compare(key string, localFilePath string) (bool, error) {
 
 	info, err := os.Stat(localFilePath)
 	if err != nil {
-		//slog.Error("os.Stat error, %v", err)
+		slog.Error("os.Stat error, %v", err)
 		return true, nil
 	}
-	localSize := info.Size()
 	localLastModified := info.ModTime()
-	if localSize != *remote.ContentLength && (*remote.LastModified).After(localLastModified) {
+
+	slog.Debug("remote.LastModified:%v, local.LastModified:%v",
+		(*remote.LastModified).Unix(), localLastModified.Unix())
+
+	if (*remote.LastModified).Unix() > localLastModified.Unix() {
 		return true, nil
 	}
 	return false, nil
