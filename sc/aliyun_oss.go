@@ -86,6 +86,7 @@ func (s *AliOSS) Compare(key string, localFilePath string) (int, error) {
 
 	info, err := os.Stat(localFilePath)
 	if err != nil {
+		slog.Debug("os.Stat error, %v", err)
 		return 1, nil
 	}
 

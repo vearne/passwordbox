@@ -114,8 +114,8 @@ func (s *QingStor) Compare(key string, localFilePath string) (int, error) {
 
 	info, err := os.Stat(localFilePath)
 	if err != nil {
-		slog.Error("os.Stat error, %v", err)
-		return -1, nil
+		slog.Debug("os.Stat error, %v", err)
+		return 1, nil
 	}
 	localLastModified := info.ModTime()
 
