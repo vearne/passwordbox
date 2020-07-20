@@ -16,7 +16,12 @@ type ObjectStorage interface {
 	UploadFile(key string, localFilePath string) bool
 	DownloadFile(key string, localFilePath string) bool
 	// If file in oss is newer than localfile?
-	Compare(key string, localFilePath string) (bool, error)
+	// if newer > 0, file in oss is newer than localfile
+	// if newer == 0 file in oss is new as localfile
+	// if newer < 0 localfile is newer than file in oss
+	Compare(key string, localFilePath string) (newer int, err error)
+	// modify Mtime of local file to consistent with file in oss
+	AdjustMTime(key string, localFilePath string) error
 	ListKeys(prefix string) ([]string, error)
 }
 
@@ -30,12 +35,15 @@ func CompareAndUpload(fileName, fullPath string) {
 		slog.Error("CompareAndDownload:%v", err)
 		return
 	}
-	if newer {
+	if newer >= 0 {
 		slog.Debug("no need to upload")
-		return
 	} else {
 		slog.Info("upload, key:%v", key)
 		GlobalOSS.UploadFile(key, fullPath)
+		err := GlobalOSS.AdjustMTime(key, fullPath)
+		if err != nil {
+			slog.Error("GlobalOSS.AdjustMTime:%v", err)
+		}
 	}
 }
 
@@ -56,9 +64,13 @@ func CompareAndDownloadAll() {
 			slog.Error("CompareAndDownload:%v", err)
 			return
 		}
-		if newer {
+		if newer > 0 {
 			slog.Info("download, key:%v", key)
 			GlobalOSS.DownloadFile(key, fullpath)
+			err := GlobalOSS.AdjustMTime(key, fullpath)
+			if err != nil {
+				slog.Error("GlobalOSS.AdjustMTime:%v", err)
+			}
 		}
 	}
 

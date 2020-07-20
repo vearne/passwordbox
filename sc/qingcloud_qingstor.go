@@ -1,6 +1,7 @@
 package sc
 
 import (
+	"fmt"
 	slog "github.com/vearne/simplelog"
 	"github.com/yunify/qingstor-sdk-go/config"
 	qs "github.com/yunify/qingstor-sdk-go/service"
@@ -8,6 +9,7 @@ import (
 	"net/http"
 	"os"
 	"strings"
+	"time"
 )
 
 type QingStor struct {
@@ -101,19 +103,19 @@ func (s *QingStor) DownloadFile(key string, localFilePath string) bool {
 	return true
 }
 
-func (s *QingStor) Compare(key string, localFilePath string) (bool, error) {
+func (s *QingStor) Compare(key string, localFilePath string) (int, error) {
 	remote, err := s.Bucket.HeadObject(key, nil)
 	if err != nil && strings.Index(err.Error(), "404") != -1 {
-		return false, nil
+		return -1, nil
 	} else if err != nil {
 		slog.Error("Bucket.HeadObject error, %v", err)
-		return false, err
+		return -1, err
 	}
 
 	info, err := os.Stat(localFilePath)
 	if err != nil {
 		slog.Error("os.Stat error, %v", err)
-		return true, nil
+		return -1, nil
 	}
 	localLastModified := info.ModTime()
 
@@ -121,7 +123,25 @@ func (s *QingStor) Compare(key string, localFilePath string) (bool, error) {
 		(*remote.LastModified).Unix(), localLastModified.Unix())
 
 	if (*remote.LastModified).Unix() > localLastModified.Unix() {
-		return true, nil
+		return 1, nil
+	} else if (*remote.LastModified).Unix() == localLastModified.Unix() {
+		return 0, nil
+	} else {
+		return -1, nil
 	}
-	return false, nil
+
+}
+
+func (s *QingStor) AdjustMTime(key string, localFilePath string) error {
+	remote, err := s.Bucket.HeadObject(key, nil)
+	if err != nil && strings.Index(err.Error(), "404") != -1 {
+		return fmt.Errorf("key does't exist")
+	} else if err != nil {
+		return fmt.Errorf("Bucket.HeadObject error, %v", err)
+	}
+
+	mTime := time.Unix((*remote.LastModified).Unix(), 0)
+	err = os.Chtimes(localFilePath, time.Now(), mTime)
+
+	return err
 }

@@ -1,9 +1,11 @@
 package sc
 
 import (
+	"fmt"
 	"github.com/aliyun/aliyun-oss-go-sdk/oss"
 	slog "github.com/vearne/simplelog"
 	"os"
+	"time"
 )
 
 type AliOSS struct {
@@ -63,15 +65,15 @@ func (s *AliOSS) DownloadFile(key string, localFilePath string) bool {
 	return true
 }
 
-func (s *AliOSS) Compare(key string, localFilePath string) (bool, error) {
+func (s *AliOSS) Compare(key string, localFilePath string) (int, error) {
 	lsRes, err := s.Bucket.ListObjects(oss.Prefix(key))
 	if err != nil {
 		slog.Error("AliOSS.ListKeys, error:%v", err)
-		return false, err
+		return -1, err
 	}
 
 	if len(lsRes.Objects) <= 0 {
-		return false, nil
+		return -1, fmt.Errorf("AliOSS.ListKeys, len(lsRes.Objects) <= 0")
 	}
 
 	var obj oss.ObjectProperties
@@ -84,13 +86,40 @@ func (s *AliOSS) Compare(key string, localFilePath string) (bool, error) {
 
 	info, err := os.Stat(localFilePath)
 	if err != nil {
-		return true, nil
+		return 1, nil
 	}
 
 	localLastModified := info.ModTime()
 	if obj.LastModified.Unix() > localLastModified.Unix() {
-		return true, nil
+		return 1, nil
+	} else if obj.LastModified.Unix() == localLastModified.Unix() {
+		return 0, nil
+	} else {
+		return -1, nil
 	}
-	return false, nil
 
+}
+
+func (s *AliOSS) AdjustMTime(key string, localFilePath string) error {
+	lsRes, err := s.Bucket.ListObjects(oss.Prefix(key))
+	if err != nil {
+		return fmt.Errorf("AliOSS.ListKeys, error:%v", err)
+	}
+
+	if len(lsRes.Objects) <= 0 {
+		return fmt.Errorf("AliOSS.ListKeys, len(lsRes.Objects) <= 0")
+	}
+
+	var obj oss.ObjectProperties
+	for _, object := range lsRes.Objects {
+		if key == object.Key {
+			obj = object
+			break
+		}
+	}
+
+	mTime := time.Unix(obj.LastModified.Unix(), 0)
+	err = os.Chtimes(localFilePath, time.Now(), mTime)
+
+	return err
 }
