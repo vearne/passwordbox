@@ -1,0 +1,9 @@
+FROM golang:1.14
+
+RUN apt-get update && apt-get install vim-common -y
+
+
+WORKDIR /go/src/github.com/vearne/passwordbox/
+ADD . /go/src/github.com/vearne/passwordbox/
+
+RUN go get

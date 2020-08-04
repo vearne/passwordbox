@@ -1,3 +1,4 @@
 .idea
 pwbox
+*.gz
 .DS_Store
