@@ -18,6 +18,9 @@ make build
 ```
 make install
 ```
+
+你也可以在 [release](https://github.com/vearne/passwordbox/releases) 
+中找到已经编译好的文件
 #### 启动
 ```
 pwbox --data=/Users/vearne

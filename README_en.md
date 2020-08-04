@@ -19,6 +19,7 @@ make build
 ```
 make install
 ```
+You can also find the compiled file in [release](https://github.com/vearne/passwordbox/releases)
 
 ### start
 ```
