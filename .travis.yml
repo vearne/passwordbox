@@ -5,8 +5,8 @@ go:
 
 install: true
 
-before_script:
-  - go get github.com/golangci/golangci-lint/cmd/golangci-lint
+#before_script:
+#- go get github.com/golangci/golangci-lint/cmd/golangci-lint
 
 
 script:
