@@ -1,5 +1,7 @@
 # passwordbox
 
+![build_ci](https://travis-ci.com/vearne/passwordbox.svg?branch=master)
+
 [English README](https://github.com/vearne/passwordbox/blob/master/README_en.md)
 
 `passwordbox`是一个类似1password的密码管理工具。完全基于命令行交互执行。

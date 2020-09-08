@@ -6,6 +6,7 @@ import (
 	"crypto/cipher"
 	"crypto/hmac"
 	"crypto/sha256"
+	slog "github.com/vearne/simplelog"
 )
 
 var Space = "                "
@@ -22,8 +23,10 @@ func paddingSpace(plaintext []byte) []byte {
 func GenHMacKey(data []byte, salt []byte) []byte {
 	h := hmac.New(sha256.New, salt)
 	// Write Data to it
-	h.Write(data)
-
+	_, err := h.Write(data)
+	if err != nil {
+		slog.Error("GenHMacKey, %v", err)
+	}
 	// Get result and encode as hexadecimal string
 	return h.Sum(nil)
 }

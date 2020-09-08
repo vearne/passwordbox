@@ -105,7 +105,7 @@ func (s *QingStor) DownloadFile(key string, localFilePath string) bool {
 
 func (s *QingStor) Compare(key string, localFilePath string) (int, error) {
 	remote, err := s.Bucket.HeadObject(key, nil)
-	if err != nil && strings.Index(err.Error(), "404") != -1 {
+	if err != nil && strings.Contains(err.Error(), "404") {
 		return -1, nil
 	} else if err != nil {
 		slog.Error("Bucket.HeadObject error, %v", err)
@@ -134,7 +134,7 @@ func (s *QingStor) Compare(key string, localFilePath string) (int, error) {
 
 func (s *QingStor) AdjustMTime(key string, localFilePath string) error {
 	remote, err := s.Bucket.HeadObject(key, nil)
-	if err != nil && strings.Index(err.Error(), "404") != -1 {
+	if err != nil && strings.Contains(err.Error(), "404") {
 		return fmt.Errorf("key does't exist")
 	} else if err != nil {
 		return fmt.Errorf("Bucket.HeadObject error, %v", err)

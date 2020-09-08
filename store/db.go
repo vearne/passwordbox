@@ -54,8 +54,7 @@ func InsertHint(db *sql.DB, hint string) error {
 		slog.Error("InsertHint, %v", err)
 		return err
 	}
-	tx.Commit()
-	return nil
+	return tx.Commit()
 }
 
 func InsertItem(db *sql.DB, item *model.SimpleItem) error {
@@ -75,8 +74,7 @@ func InsertItem(db *sql.DB, item *model.SimpleItem) error {
 		slog.Error("InsertItem, %v", err)
 		return err
 	}
-	tx.Commit()
-	return nil
+	return tx.Commit()
 }
 func UpdateItem(db *sql.DB, item *model.SimpleItem) error {
 	tx, err := db.Begin()
@@ -84,8 +82,8 @@ func UpdateItem(db *sql.DB, item *model.SimpleItem) error {
 		slog.Error("UpdateItem, %v", err)
 		return err
 	}
-	sql := "update item set title = ?, IVCiphertext = ? where id = ?"
-	stmt, err := tx.Prepare(sql)
+	query := "update item set title = ?, IVCiphertext = ? where id = ?"
+	stmt, err := tx.Prepare(query)
 	if err != nil {
 		slog.Error("UpdateItem, %v", err)
 		return err
@@ -96,15 +94,14 @@ func UpdateItem(db *sql.DB, item *model.SimpleItem) error {
 		slog.Error("UpdateItem, %v", err)
 		return err
 	}
-	tx.Commit()
-	return nil
+	return tx.Commit()
 }
 
 func CountItems(db *sql.DB, keyword string) (int, error) {
-	sql := fmt.Sprintf("select count(*) from item where title like %q",
+	query := fmt.Sprintf("select count(*) from item where title like %q",
 		"%"+keyword+"%")
 
-	stmt, err := db.Prepare(sql)
+	stmt, err := db.Prepare(query)
 	if err != nil {
 		slog.Error("Get, %v", err)
 		return -1, err
@@ -136,15 +133,14 @@ func DeleteItem(db *sql.DB, itemId int) error {
 		slog.Error("DeleteItem, %v", err)
 		return err
 	}
-	tx.Commit()
-	return nil
+	return tx.Commit()
 }
 
 func Query(db *sql.DB, keyword string, pageId, pageSize int) ([]*model.SimpleItem, error) {
-	sql := "select id, title, IVCiphertext from item where title like %q limit %d, %d"
-	sql = fmt.Sprintf(sql, "%"+keyword+"%", (pageId-1)*pageSize, pageSize)
-	slog.Debug("sql:%v", sql)
-	rows, err := db.Query(sql)
+	query := "select id, title, IVCiphertext from item where title like %q limit %d, %d"
+	query = fmt.Sprintf(query, "%"+keyword+"%", (pageId-1)*pageSize, pageSize)
+	slog.Debug("sql:%v", query)
+	rows, err := db.Query(query)
 	if err != nil {
 		slog.Error("query, %v", err)
 		return nil, err
