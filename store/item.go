@@ -53,20 +53,27 @@ func AddItem(c *cli.Context) error {
 	// perform the questions
 	err := survey.Ask(qs, &answers)
 	if err != nil {
-		fmt.Println("error", err)
+		fmt.Printf("survey.Ask error, %v\n", err)
 		return err
 	}
 	answers.ModifiedAt = time.Now().Format(time.RFC3339)
-	if err != nil {
-		return err
-	}
 	PrintItems([]*model.DetailItem{&answers})
 
-	InsertItem(GlobalStore.DB, ChangeToSimpleItem(&answers))
+	err = InsertItem(GlobalStore.DB, ChangeToSimpleItem(&answers))
+	if err != nil {
+		fmt.Printf("InsertItem error,%v\n", err)
+		return err
+	}
 
 	GlobalStore.Dirty = true
 	fmt.Println("AddItem-save to file")
-	SearchItem(c)
+
+	err = SearchItem(c)
+	if err != nil {
+		fmt.Printf("SearchItem error,%v\n", err)
+		return err
+	}
+
 	return nil
 }
 
@@ -86,7 +93,11 @@ func DelItem(c *cli.Context) error {
 	prompt := &survey.Confirm{
 		Message: "confirm delete?",
 	}
-	survey.AskOne(prompt, &confirmDel)
+	err = survey.AskOne(prompt, &confirmDel)
+	if err != nil {
+		fmt.Printf("survey.AskOne error, %v\n", err)
+		return err
+	}
 	if confirmDel {
 		GlobalStore.Dirty = true
 		err = DeleteItem(GlobalStore.DB, itemId)
@@ -98,7 +109,11 @@ func DelItem(c *cli.Context) error {
 	}
 
 	// For user experience
-	SearchItem(c)
+	err = SearchItem(c)
+	if err != nil {
+		fmt.Printf("SearchItem error, %v\n", err)
+		return err
+	}
 	return nil
 }
 
@@ -115,7 +130,7 @@ func ModifyItem(c *cli.Context) error {
 	itemId := c.Int("itemId")
 	item, err := GetItem(GlobalStore.DB, itemId)
 	if err != nil {
-		fmt.Println("can't find %v", itemId)
+		fmt.Printf("can't find %v\n", itemId)
 		return nil
 	}
 	detailItem := ParseSimpleItem(item)
@@ -174,7 +189,11 @@ func ModifyItem(c *cli.Context) error {
 		GlobalStore.Dirty = true
 		detailItem.ModifiedAt = time.Now().Format(time.RFC3339)
 		PrintItems([]*model.DetailItem{detailItem})
-		UpdateItem(GlobalStore.DB, ChangeToSimpleItem(detailItem))
+		err = UpdateItem(GlobalStore.DB, ChangeToSimpleItem(detailItem))
+		if err != nil {
+			fmt.Printf("UpdateItem error %v\n", err)
+			return err
+		}
 	} else {
 		color.Yellow("The item remains the same as before.")
 		PrintItems([]*model.DetailItem{detailItem})
@@ -248,7 +267,10 @@ func ParseSimpleItem(item *model.SimpleItem) *model.DetailItem {
 	iv := bt[0:aes.BlockSize]
 	plaintext := utils.DecryptAesInCFB(bt[aes.BlockSize:], GlobalStore.Key, iv)
 	slog.Debug("ParseSimpleItem:%v", string(plaintext))
-	json.Unmarshal(plaintext, &result)
+	err := json.Unmarshal(plaintext, &result)
+	if err != nil {
+		slog.Error("json.Unmarshal DetailItem error,%v\n", err)
+	}
 	result.ID = item.ID
 	result.Title = item.Title
 	return &result

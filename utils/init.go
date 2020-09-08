@@ -14,10 +14,7 @@ import (
 func Exists(path string) bool {
 	_, err := os.Stat(path) //os.Stat获取文件信息
 	if err != nil {
-		if os.IsExist(err) {
-			return true
-		}
-		return false
+		return os.IsExist(err)
 	}
 	return true
 }
@@ -35,7 +32,9 @@ func Sha256N(plaintext string, n int) string {
 	h := sha256.New()
 	buff := []byte(plaintext)
 	for i := 0; i < n; i++ {
-		h.Write(buff)
+		_, err := h.Write(buff)
+		slog.Error("Sha256N:%v error", err)
+
 		buff = h.Sum(nil)
 		h.Reset()
 	}

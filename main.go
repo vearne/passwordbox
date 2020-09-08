@@ -122,8 +122,7 @@ func main() {
 		{
 			Name: "help",
 			Action: func(cxt *cli.Context) error {
-				cli.ShowAppHelp(cxt)
-				return nil
+				return cli.ShowAppHelp(cxt)
 			},
 		},
 	}
@@ -195,7 +194,10 @@ LOGIN:
 	promptDatabse := &survey.Input{
 		Message: "Please type database's name:",
 	}
-	survey.AskOne(promptDatabse, &database, survey.WithValidator(survey.Required))
+	err := survey.AskOne(promptDatabse, &database, survey.WithValidator(survey.Required))
+	if err != nil {
+		fmt.Printf("survey.AskOne error, %v\n", err)
+	}
 
 	database = strings.TrimSpace(database)
 	slog.Debug("database:%v", database)
@@ -208,13 +210,22 @@ LOGIN:
 		prompt := &survey.Confirm{
 			Message: "Database is not exist.\nDo you like to create database now?",
 		}
-		survey.AskOne(prompt, &createFlag)
+		err = survey.AskOne(prompt, &createFlag)
+		if err != nil {
+			fmt.Printf("survey.AskOne error, %v\n", err)
+			createFlag = false
+		}
+
 		if !createFlag {
 			return nil
 		}
 
 		// ---- create database ----
-		createDatabase(dataPath)
+		err = createDatabase(dataPath)
+		if err != nil {
+			fmt.Printf("createDatabase error, %v\n", err)
+			return err
+		}
 		goto LOGIN
 	}
 
@@ -222,7 +233,10 @@ LOGIN:
 	promptPasswd := &survey.Password{
 		Message: "Please type your password:",
 	}
-	survey.AskOne(promptPasswd, &password, survey.WithValidator(survey.Required))
+	err = survey.AskOne(promptPasswd, &password, survey.WithValidator(survey.Required))
+	if err != nil {
+		fmt.Printf("survey.AskOne error, %v\n", err)
+	}
 
 	db, err := store.OpenDatabaseStore(dataPath, &model.Database{Name: database, Password: password})
 	if err != nil {
@@ -254,7 +268,10 @@ Tip: Type help for help.
 		`
 	fmt.Println(msg)
 	// For user experience
-	store.SearchItem(c)
+	err = store.SearchItem(c)
+	if err != nil {
+		fmt.Printf("SearchItem error, %v\n", err)
+	}
 
 	for {
 		commandLine, err := line.Prompt(store.GlobalStore.DatabaseName + " > ")
@@ -273,7 +290,10 @@ Tip: Type help for help.
 
 		cmd := cmdArgs[0]
 		if cmdArgs[0] == "quit" {
-			store.Quit(c)
+			err = store.Quit(c)
+			if err != nil {
+				fmt.Printf("store.Quit error, %v\n", err)
+			}
 			break
 		}
 		if !utils.FindInSlice(cmd, []string{"clear", "add", "delete",
@@ -282,7 +302,10 @@ Tip: Type help for help.
 			continue
 		}
 
-		c.App.Run(s)
+		err = c.App.Run(s)
+		if err != nil {
+			fmt.Println("App.Run error", s)
+		}
 
 	}
 	return nil
