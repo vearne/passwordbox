@@ -1,4 +1,4 @@
-![logo](http://ut-bucket01.sh1a.qingstor.com/woshiaotian/20210115/71ae069a-5700-11eb-9211-784f43a6cab8.png)
+# passwordbox
 
 ![build_ci](https://travis-ci.com/vearne/passwordbox.svg?branch=master)
 
