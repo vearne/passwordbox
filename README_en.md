@@ -1,6 +1,6 @@
 # passwordbox
 
-![build_ci](https://travis-ci.com/vearne/passwordbox.svg?branch=master)
+[![golang-ci](https://github.com/vearne/passwordbox/actions/workflows/golang-ci.yml/badge.svg)](https://github.com/vearne/passwordbox/actions/workflows/golang-ci.yml)
 
 [中文 README](https://github.com/vearne/passwordbox/blob/master/README.md)
 
