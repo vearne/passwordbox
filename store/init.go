@@ -18,19 +18,6 @@ var (
 	GlobalStore *DatabaseStore
 )
 
-type DatabaseStore struct {
-	DatabaseName string
-	Hint         string
-	Items        []*model.SimpleItem
-	FileName     string
-	FullPath     string
-	Key          []byte
-	DataBaseIV   string
-	DB           *sql.DB
-	TempFile     string
-	Dirty        bool
-}
-
 func NewDatabaseStore(dataPath string, database *model.Database) *DatabaseStore {
 	databaseName := strings.TrimSpace(database.Name)
 	filename := utils.Sha256N(databaseName, consts.HashCount)
@@ -88,6 +75,21 @@ func OpenDatabaseStore(dataPath string, database *model.Database) (*DatabaseStor
 		return nil, err
 	}
 	return &s, nil
+}
+
+type DatabaseStore struct {
+	DatabaseName string
+	Hint         string
+	Items        []*model.SimpleItem
+	FileName     string
+	FullPath     string
+	Key          []byte
+	DataBaseIV   string
+	DB           *sql.DB
+	TempFile     string
+	Dirty        bool
+	NeedBackup   bool
+	BackupItems  []model.BackupItem
 }
 
 func (s *DatabaseStore) Init() error {

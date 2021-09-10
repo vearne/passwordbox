@@ -11,12 +11,13 @@ import (
 	"github.com/olekukonko/tablewriter"
 	"github.com/urfave/cli/v2"
 	"github.com/vearne/passwordbox/consts"
-	"github.com/vearne/passwordbox/sc"
-
 	"github.com/vearne/passwordbox/model"
+	"github.com/vearne/passwordbox/resource"
+	"github.com/vearne/passwordbox/sc"
 	"github.com/vearne/passwordbox/utils"
 	slog "github.com/vearne/simplelog"
 	"os"
+	"path/filepath"
 	"strconv"
 	"time"
 )
@@ -246,6 +247,20 @@ func Quit(c *cli.Context) error {
 		GlobalStore.Close()
 		sc.CompareAndUpload(GlobalStore.FileName, GlobalStore.FullPath)
 	}
+
+	if GlobalStore.NeedBackup {
+		timeStr := time.Now().Format(time.RFC3339)
+		key := filepath.Join(resource.GlobalOSS.GetDirPath(), GlobalStore.FileName+"."+timeStr)
+		resource.GlobalOSS.UploadFile(key, GlobalStore.FullPath)
+	}
+
+	resource.LoopExit = true
+	return nil
+}
+
+func Backup(c *cli.Context) error {
+	GlobalStore.NeedBackup = true
+	fmt.Println("Backup will be executed where it quit.")
 	return nil
 }
 
@@ -288,6 +303,17 @@ func PrintItems(items []*model.DetailItem) {
 	}
 	table.Render() // Send output
 }
+
+func PrintBackups(items []model.BackupItem) {
+	table := tablewriter.NewWriter(os.Stdout)
+	table.SetHeader([]string{"ID", "Tag"})
+
+	for _, item := range items {
+		table.Append([]string{strconv.Itoa(item.ID), item.Tag})
+	}
+	table.Render() // Send output
+}
+
 func ConvToItems(items []*model.SimpleItem) []*model.DetailItem {
 	result := make([]*model.DetailItem, 0)
 	var di *model.DetailItem

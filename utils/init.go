@@ -33,8 +33,9 @@ func Sha256N(plaintext string, n int) string {
 	buff := []byte(plaintext)
 	for i := 0; i < n; i++ {
 		_, err := h.Write(buff)
-		slog.Error("Sha256N:%v error", err)
-
+		if err != nil {
+			slog.Error("Sha256N:%v error", err)
+		}
 		buff = h.Sum(nil)
 		h.Reset()
 	}
