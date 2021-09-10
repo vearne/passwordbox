@@ -80,9 +80,9 @@ Hint for database test is test
 In interactive mode, you can use the following commands.
 
 ####  help 
- Get usage details of commands
+Get usage details of commands
 #### add
-  Add a item
+Add a item
 
 ```
 test > add
@@ -175,6 +175,41 @@ test1 > view --itemId 3
 |  3 | t3    | a3      | p3       |         | 2020-04-16T10:04:47+08:00 |
 +----+-------+---------+----------+---------+---------------------------+
 ```
+
+##### backup
+Backup
+```
+test > backup
+2021/09/10 22:23:09 [debug] commandLine:backup
+Backup will be executed where it quit.
+```
+##### restore
+Display a list of all backup files
+```
+test > restore
+--RestoreItem--
++----+---------------------------+
+| ID |            TAG            |
++----+---------------------------+
+|  1 | 2021-09-10T22:24:34+08:00 |
+|  2 | 2021-09-10T22:09:09+08:00 |
+|  3 | 2021-09-10T21:57:03+08:00 |
+|  4 | 2021-09-10T19:15:30+08:00 |
+|  5 | 2021-09-10T18:31:27+08:00 |
+|  6 | 2021-09-10T17:31:25+08:00 |
++----+---------------------------+
+```
+Restore from the specified backup file
+```
+test > restore -tagId 1
+--RestoreItem--
+? confirm restore? Yes
+2021/09/10 22:26:46 [info] 1. RestoreItem-close DB
+2021/09/10 22:26:46 [info] 2. RestoreItem-rename, oldName:/tmp/6879630a7d56210d2cd2491cb99d781194689fed71d7890a8dabbcb3a678cb73.2021-09-10T22:24:34+08:00, newName:/tmp/6879630a7d56210d2cd2491cb99d781194689fed71d7890a8dabbcb3a678cb73
+2021/09/10 22:26:46 [info] 3. RestoreItem-upload, key:pwbox/6879630a7d56210d2cd2491cb99d781194689fed71d7890a8dabbcb3a678cb73
+2021/09/10 22:26:46 [info] Restore success.Please login later...
+```
+
 #### quit
 **Notice:** Remember, changes will only be saved when the quit command is executed.
 

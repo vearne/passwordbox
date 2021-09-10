@@ -20,14 +20,10 @@ import (
 	"strings"
 )
 
-var (
-	Version = "v0.0.9"
-)
-
 func main() {
 	app := cli.NewApp()
 	app.Name = "passwordbox"
-	app.Version = Version
+	app.Version = consts.Version
 	MasterAuthor := &cli.Author{Name: "vearne", Email: "asdwoshiaotian@gmail.com"}
 	app.Authors = []*cli.Author{MasterAuthor}
 	app.Copyright = "(c)2020-? vearne"
@@ -116,6 +112,22 @@ func main() {
 			},
 		},
 		{
+			Name:   "backup",
+			Action: store.Backup,
+		},
+		{
+			Name:      "restore",
+			Usage:     "restore [-tagId <tagId>]",
+			UsageText: "Restore from backup data with specific tag.",
+			Action:    store.RestoreItem,
+			Flags: []cli.Flag{
+				&cli.IntFlag{
+					Name:  "tagId",
+					Value: -1,
+				},
+			},
+		},
+		{
 			Name:   "quit",
 			Action: store.Quit,
 		},
@@ -167,20 +179,20 @@ func MainLogic(c *cli.Context) error {
 			if err != nil {
 				slog.Fatal("can't parse oss config file, %v", err)
 			}
-			sc.GlobalOSS = &oss
+			resource.GlobalOSS = &oss
 		case "oss":
 			oss := sc.AliOSS{}
 			err := viper.Unmarshal(&oss)
 			if err != nil {
 				slog.Fatal("can't parse oss config file, %v", err)
 			}
-			sc.GlobalOSS = &oss
+			resource.GlobalOSS = &oss
 		default:
 			slog.Fatal("Unsupport Cloud service providers, %v", ossType)
 		}
 
 		// init object storage service
-		err := sc.GlobalOSS.Init()
+		err := resource.GlobalOSS.Init()
 		if err != nil {
 			slog.Fatal("GlobalOSS init error:%v", err)
 		}
@@ -289,15 +301,10 @@ Tip: Type help for help.
 		s = append(s, cmdArgs...)
 
 		cmd := cmdArgs[0]
-		if cmdArgs[0] == "quit" {
-			err = store.Quit(c)
-			if err != nil {
-				fmt.Printf("store.Quit error, %v\n", err)
-			}
-			break
-		}
-		if !utils.FindInSlice(cmd, []string{"clear", "add", "delete",
-			"modify", "view", "search", "help"}) {
+		if !utils.FindInSlice(cmd, []string{
+			"clear", "add", "delete", "quit",
+			"modify", "view", "search",
+			"backup", "restore", "help"}) {
 			fmt.Println("unknow command", cmd)
 			continue
 		}
@@ -307,6 +314,9 @@ Tip: Type help for help.
 			fmt.Println("App.Run error", s)
 		}
 
+		if resource.LoopExit {
+			break
+		}
 	}
 	return nil
 }

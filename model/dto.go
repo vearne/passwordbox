@@ -9,6 +9,11 @@ type DetailItem struct {
 	ModifiedAt string `json:"modifiedAt"`
 }
 
+type BackupItem struct {
+	ID  int    `json:"-"`
+	Tag string `json:"tag"`
+}
+
 type SimpleItem struct {
 	ID           int `json:"id"`
 	Title        string
