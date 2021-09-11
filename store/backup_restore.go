@@ -47,12 +47,20 @@ func RestoreItem(c *cli.Context) error {
 	slog.Info("1. RestoreItem-close DB")
 	GlobalStore.Close()
 	// delete
-	os.Remove(GlobalStore.FullPath)
+	err = os.Remove(GlobalStore.FullPath)
+	if err != nil {
+		slog.Error("os.Remove:%v", GlobalStore.FullPath)
+		return err
+	}
 	oldName := filepath.Join(resource.DataPath, GlobalStore.FileName+"."+items[tagId-1].Tag)
 	newName := GlobalStore.FullPath
 	// rename
 	slog.Info("2. RestoreItem-rename, oldName:%v, newName:%v", oldName, newName)
-	os.Rename(oldName, newName)
+	err = os.Rename(oldName, newName)
+	if err != nil {
+		slog.Error("os.Rename:%v", oldName)
+		return err
+	}
 	// upload
 	key := filepath.Join(resource.GlobalOSS.GetDirPath(), GlobalStore.FileName)
 	slog.Info("3. RestoreItem-upload, key:%v", key)
