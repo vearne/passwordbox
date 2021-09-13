@@ -18,6 +18,7 @@ import (
 	slog "github.com/vearne/simplelog"
 	"os"
 	"path/filepath"
+	"sort"
 	"strconv"
 	"time"
 )
@@ -252,6 +253,33 @@ func Quit(c *cli.Context) error {
 		timeStr := time.Now().Format(time.RFC3339)
 		key := filepath.Join(resource.GlobalOSS.GetDirPath(), GlobalStore.FileName+"."+timeStr)
 		resource.GlobalOSS.UploadFile(key, GlobalStore.FullPath)
+
+		// 保证本地和remote一致
+		resource.GlobalOSS.DownloadFile(key, GlobalStore.FullPath+"."+timeStr)
+
+		files, err := getAllBackupFiles(resource.DataPath, GlobalStore.FileName)
+		if err != nil {
+			slog.Error("RestoreItem-GetAllBackupFiles, %v", err)
+		}
+
+		sort.Sort(sort.Reverse(sort.StringSlice(files)))
+		if len(files) > resource.MaxBackupFileCount {
+			for i := resource.MaxBackupFileCount; i < len(files); i++ {
+				// 1. remove oss file
+				key := filepath.Join(resource.GlobalOSS.GetDirPath(), filepath.Base(files[i]))
+				err = resource.GlobalOSS.Delete(key)
+				if err != nil {
+					slog.Error("remove remote backup file:%v", err)
+				}
+				slog.Debug("remove remote file:%v", key)
+				// 2. remove local file
+				slog.Debug("remove local file:%v", files[i])
+				err = os.Remove(files[i])
+				if err != nil {
+					slog.Error("remove local backup file:%v", err)
+				}
+			}
+		}
 	}
 
 	resource.LoopExit = true
