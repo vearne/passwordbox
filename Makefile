@@ -1,4 +1,4 @@
-VERSION = v0.0.11
+VERSION = v0.0.12
 
 CONTAINER=pwbox
 IMPORT_PATH = github.com/vearne/passwordbox
