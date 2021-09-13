@@ -145,3 +145,8 @@ func (s *QingStor) AdjustMTime(key string, localFilePath string) error {
 
 	return err
 }
+
+func (s *QingStor) Delete(key string) error {
+	_, err := s.Bucket.DeleteObject(key)
+	return err
+}

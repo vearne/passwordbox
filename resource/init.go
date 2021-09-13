@@ -5,7 +5,8 @@ import (
 )
 
 var (
-	DataPath string
+	DataPath           string
+	MaxBackupFileCount int
 )
 
 var (

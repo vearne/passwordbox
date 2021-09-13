@@ -13,4 +13,5 @@ type ObjectStorage interface {
 	// modify Mtime of local file to consistent with file in oss
 	AdjustMTime(key string, localFilePath string) error
 	ListKeys(prefix string) ([]string, error)
+	Delete(key string) error
 }

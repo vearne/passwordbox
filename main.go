@@ -40,6 +40,11 @@ func main() {
 			Usage:   "specify log level, optional: debug|info|warn|error",
 			Value:   "info",
 		},
+		&cli.IntFlag{
+			Name:  "maxBackupFileCount",
+			Usage: "Maximum number of backup file retained",
+			Value: 5,
+		},
 		&cli.StringFlag{
 			Name: "oss",
 			Usage: `--oss /etc/qingstor.yaml
@@ -146,11 +151,17 @@ func main() {
 }
 
 func MainLogic(c *cli.Context) error {
-	// check data directory exist?
-	dataPath := c.String("data")
 	logLevel := c.String("loglevel")
 	slog.Level = slog.LogMap[logLevel]
 
+	maxBackupFileCount := c.Int("maxBackupFileCount")
+	resource.MaxBackupFileCount = maxBackupFileCount
+	if resource.MaxBackupFileCount <= 0 {
+		resource.MaxBackupFileCount = 5
+	}
+
+	// check data directory exist?
+	dataPath := c.String("data")
 	if !utils.Exists(dataPath) {
 		return cli.Exit("Data directory is not exist.", -1)
 	}

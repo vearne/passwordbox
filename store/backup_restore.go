@@ -107,7 +107,7 @@ func getAllBackupFiles(dirPth string, prefix string) (files []string, err error)
 		} else {
 			// 过滤指定格式
 			ok := strings.HasPrefix(fi.Name(), prefix)
-			if ok {
+			if ok && fi.Name() != prefix {
 				files = append(files, dirPth+PthSep+fi.Name())
 			}
 		}

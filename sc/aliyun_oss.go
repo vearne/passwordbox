@@ -124,3 +124,8 @@ func (s *AliOSS) AdjustMTime(key string, localFilePath string) error {
 
 	return err
 }
+
+func (s *AliOSS) Delete(key string) error {
+	err := s.Bucket.DeleteObject(key)
+	return err
+}
