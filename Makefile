@@ -20,7 +20,7 @@ install: build
 
 release: release-linux release-mac
 
-release-linux:
+release-linux: docker-img
 	docker run -v `pwd`:$(SOURCE_PATH) -t -e GOOS=linux -e GOARCH=amd64 -i $(CONTAINER) go build $(LDFLAGS) -o pwbox
 	tar -zcvf pwbox-$(VERSION)-linux-amd64.tar.gz ./pwbox
 	rm pwbox
