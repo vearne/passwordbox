@@ -21,7 +21,7 @@ make build
 make install
 ```
 
-你也可以在 [release](https://github.com/vearne/passwordbox/releases) 
+你也可以在 [release](https://github.com/vearne/passwordbox/releases)
 中找到已经编译好的文件
 #### 启动
 ```
@@ -36,7 +36,7 @@ alias pwbox='pwbox --data=/Users/vearne'
 ```
 
 #### 同步到对象存储
-如果你希望数据文件在多个设备中共享，你还可以通过配置对象存储来实现。    
+如果你希望数据文件在多个设备中共享，你还可以通过配置对象存储来实现。
 ##### 目前已支持
 
 * [青云](https://www.qingcloud.com/products/qingstor/)  `qingstor.yaml`
@@ -50,7 +50,7 @@ pwbox --data=/Users/vearne --oss=/directory/oss.yaml
 ```
 * --oss 对象存储的配置文件 (可选)
 
-##### 注意: 
+##### 注意:
 1) pwbox是通过配置文件的名称来识别对象存储所属的云厂商，所以配置文件的名称是固定的
 2) 为了安全，一定要把对象存储的Bucket设置为私有(只允许使用密钥进行读写)
 
@@ -203,6 +203,23 @@ test > restore -tagId 1
 ##### quit
 **注意** 记住所有修改（CRUD）只有在执行`quit`命令时，才会被持久化到磁盘上。
 
+##### modifyDB
+修改数据库密码(对于之前的备份文件无效)
+```
+test3 > modifyDB
+Modify DB password
+1) The length must be greater than or equal to 8
+2) It must contain at least one lowercase character[a-z]
+3) It must contain at least one uppercase character[A-Z]
+4) It must contain at least one number[0-9]
+5) It must contain at least one special character[+-=_&$#^]
+? Please type Database's new password: **************
+? Please type Database's new password again: **************
+
+2021/09/22 14:55:25 [info] len(itemList):1
+test3 > quit
+Save and Quit
+```
 
 ### 对象存储配置文件模板
 

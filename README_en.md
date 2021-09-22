@@ -209,6 +209,25 @@ test > restore -tagId 1
 2021/09/10 22:26:46 [info] 3. RestoreItem-upload, key:pwbox/6879630a7d56210d2cd2491cb99d781194689fed71d7890a8dabbcb3a678cb73
 2021/09/10 22:26:46 [info] Restore success.Please login later...
 ```
+##### modifyDB
+Modify the database password
+(does not take effect for the previous backup file)
+```
+test3 > modifyDB
+Modify DB password
+1) The length must be greater than or equal to 8
+2) It must contain at least one lowercase character[a-z]
+3) It must contain at least one uppercase character[A-Z]
+4) It must contain at least one number[0-9]
+5) It must contain at least one special character[+-=_&$#^]
+? Please type Database's new password: **************
+? Please type Database's new password again: **************
+
+2021/09/22 14:55:25 [info] len(itemList):1
+test3 > quit
+Save and Quit
+```
+
 
 #### quit
 **Notice:** Remember, changes will only be saved when the quit command is executed.
