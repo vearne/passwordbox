@@ -340,8 +340,10 @@ func ModifyDBPassword(c *cli.Context) error {
 
 		return err
 	}
-	slog.Info("len(itemList):%v", len(itemList))
+
 	GlobalStore.Dirty = true
+	fmt.Println("Use the command[quit] to make the changes take effect.")
+
 	for _, item := range itemList {
 		detailItem := ParseSimpleItem(item, oldKey)
 
