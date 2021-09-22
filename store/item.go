@@ -299,6 +299,12 @@ func ModifyDBPassword(c *cli.Context) error {
 	flag := false
 	for !flag {
 		// perform the questions
+		howtouse := `1) The length must be greater than or equal to 8
+2) It must contain at least one lowercase character[a-z]
+3) It must contain at least one uppercase character[A-Z]
+4) It must contain at least one number[0-9]
+5) It must contain at least one special character[+-=_&$#^]`
+		color.Red(howtouse)
 		// 1. password
 		prompt := &survey.Password{
 			Message: "Please type Database's new password:",
@@ -319,6 +325,7 @@ func ModifyDBPassword(c *cli.Context) error {
 		}
 		if answers.Password == answers.Password2 {
 			flag = true
+			fmt.Printf("\n")
 		} else {
 			fmt.Printf("The password entered 2 times is not the same!")
 		}
@@ -330,6 +337,7 @@ func ModifyDBPassword(c *cli.Context) error {
 	itemList, err := Query(GlobalStore.DB, "", 1, 10000)
 	if err != nil {
 		fmt.Printf("query err, %v\n", err)
+
 		return err
 	}
 	slog.Info("len(itemList):%v", len(itemList))
