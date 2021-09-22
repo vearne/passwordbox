@@ -5,6 +5,7 @@ import (
 	"crypto/aes"
 	"encoding/base64"
 	"encoding/json"
+	"errors"
 	"fmt"
 	"github.com/AlecAivazis/survey/v2"
 	"github.com/fatih/color"
@@ -18,6 +19,7 @@ import (
 	slog "github.com/vearne/simplelog"
 	"os"
 	"path/filepath"
+	"reflect"
 	"sort"
 	"strconv"
 	"time"
@@ -61,7 +63,7 @@ func AddItem(c *cli.Context) error {
 	answers.ModifiedAt = time.Now().Format(time.RFC3339)
 	PrintItems([]*model.DetailItem{&answers})
 
-	err = InsertItem(GlobalStore.DB, ChangeToSimpleItem(&answers))
+	err = InsertItem(GlobalStore.DB, ChangeToSimpleItem(&answers, GlobalStore.Key))
 	if err != nil {
 		fmt.Printf("InsertItem error,%v\n", err)
 		return err
@@ -88,7 +90,7 @@ func DelItem(c *cli.Context) error {
 		fmt.Printf("can't find %v\n", itemId)
 		return nil
 	}
-	detailItem := ParseSimpleItem(item)
+	detailItem := ParseSimpleItem(item, GlobalStore.Key)
 	PrintItems([]*model.DetailItem{detailItem})
 
 	confirmDel := false
@@ -135,7 +137,7 @@ func ModifyItem(c *cli.Context) error {
 		fmt.Printf("can't find %v\n", itemId)
 		return nil
 	}
-	detailItem := ParseSimpleItem(item)
+	detailItem := ParseSimpleItem(item, GlobalStore.Key)
 	// These are using the default foreground colors
 	color.Red("If you don't want to make changes, you can just press Enter!")
 	password := paddingStar(len(detailItem.Password))
@@ -191,7 +193,7 @@ func ModifyItem(c *cli.Context) error {
 		GlobalStore.Dirty = true
 		detailItem.ModifiedAt = time.Now().Format(time.RFC3339)
 		PrintItems([]*model.DetailItem{detailItem})
-		err = UpdateItem(GlobalStore.DB, ChangeToSimpleItem(detailItem))
+		err = UpdateItem(GlobalStore.DB, ChangeToSimpleItem(detailItem, GlobalStore.Key))
 		if err != nil {
 			fmt.Printf("UpdateItem error %v\n", err)
 			return err
@@ -211,7 +213,7 @@ func ViewItem(c *cli.Context) error {
 		fmt.Printf("can't find %v\n", itemId)
 		return nil
 	}
-	detailItem := ParseSimpleItem(item)
+	detailItem := ParseSimpleItem(item, GlobalStore.Key)
 	PrintItems([]*model.DetailItem{detailItem})
 	return nil
 }
@@ -286,29 +288,103 @@ func Quit(c *cli.Context) error {
 	return nil
 }
 
+func ModifyDBPassword(c *cli.Context) error {
+	fmt.Println("Modify DB password")
+
+	answers := struct {
+		Password  string `survey:"password"`
+		Password2 string `survey:"password2"`
+	}{}
+
+	flag := false
+	for !flag {
+		// perform the questions
+		// 1. password
+		prompt := &survey.Password{
+			Message: "Please type Database's new password:",
+		}
+		err := survey.AskOne(prompt, &answers.Password, survey.WithValidator(PasswordComplexityRequired))
+		if err != nil {
+			fmt.Printf("survey.AskOne error, %v\n", err)
+			return err
+		}
+		// 2. password2
+		prompt = &survey.Password{
+			Message: "Please type Database's new password again:",
+		}
+		err = survey.AskOne(prompt, &answers.Password2, survey.WithValidator(survey.Required))
+		if err != nil {
+			fmt.Printf("survey.AskOne error, %v\n", err)
+			return err
+		}
+		if answers.Password == answers.Password2 {
+			flag = true
+		} else {
+			fmt.Printf("The password entered 2 times is not the same!")
+		}
+	}
+
+	oldKey := GlobalStore.Key
+	GlobalStore.Key = utils.GenHMacKey([]byte(answers.Password), []byte(GlobalStore.DataBaseIV))
+	// 将所有的item重新保存
+	itemList, err := Query(GlobalStore.DB, "", 1, 10000)
+	if err != nil {
+		fmt.Printf("query err, %v\n", err)
+		return err
+	}
+	slog.Info("len(itemList):%v", len(itemList))
+	GlobalStore.Dirty = true
+	for _, item := range itemList {
+		detailItem := ParseSimpleItem(item, oldKey)
+
+		slog.Debug("id:%v, title:%v", item.ID, item.Title)
+		detailItem.ModifiedAt = time.Now().Format(time.RFC3339)
+		err = UpdateItem(GlobalStore.DB, ChangeToSimpleItem(detailItem, GlobalStore.Key))
+		if err != nil {
+			fmt.Printf("UpdateItem error %v\n", err)
+			return err
+		}
+	}
+	return nil
+}
+
+func PasswordComplexityRequired(val interface{}) error {
+	// the reflect value of the result
+	value := reflect.ValueOf(val)
+
+	if value.Kind() != reflect.String {
+		return errors.New("string is required")
+	}
+	pwd := value.String()
+	if !utils.IsSecurePassword(pwd) {
+		return errors.New("password is too simple")
+	}
+	return nil
+}
+
 func Backup(c *cli.Context) error {
 	GlobalStore.NeedBackup = true
 	fmt.Println("Backup will be executed where it quit.")
 	return nil
 }
 
-func ChangeToSimpleItem(answers *model.DetailItem) *model.SimpleItem {
+func ChangeToSimpleItem(answers *model.DetailItem, key []byte) *model.SimpleItem {
 	bt, _ := json.Marshal(answers)
 
 	itemIV := utils.GenRandIV()
 	buffer := bytes.NewBuffer(make([]byte, 0))
 	buffer.Write(itemIV)
-	buffer.Write([]byte(utils.EncryptAesInCFB(bt, GlobalStore.Key, itemIV)))
+	buffer.Write([]byte(utils.EncryptAesInCFB(bt, key, itemIV)))
 	ic := base64.StdEncoding.EncodeToString(buffer.Bytes())
 	item := model.SimpleItem{ID: answers.ID, Title: answers.Title, IVCiphertext: ic}
 	return &item
 }
 
-func ParseSimpleItem(item *model.SimpleItem) *model.DetailItem {
+func ParseSimpleItem(item *model.SimpleItem, key []byte) *model.DetailItem {
 	result := model.DetailItem{}
 	bt, _ := base64.StdEncoding.DecodeString(item.IVCiphertext)
 	iv := bt[0:aes.BlockSize]
-	plaintext := utils.DecryptAesInCFB(bt[aes.BlockSize:], GlobalStore.Key, iv)
+	plaintext := utils.DecryptAesInCFB(bt[aes.BlockSize:], key, iv)
 	slog.Debug("ParseSimpleItem:%v", string(plaintext))
 	err := json.Unmarshal(plaintext, &result)
 	if err != nil {
