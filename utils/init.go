@@ -74,3 +74,25 @@ func CalcTotalPage(total, pageSize int) int {
 	}
 	return x
 }
+
+func IsSecurePassword(s string) bool {
+	if len(s) < 8 {
+		return false
+	}
+	var hasLowerCaseChar bool
+	var hasUpperCaseChar bool
+	var hasNumberChar bool
+	var hasSpecialChar bool
+	for _, char := range s {
+		if char >= 'a' && char <= 'z' {
+			hasLowerCaseChar = true
+		} else if char >= 'A' && char <= 'Z' {
+			hasUpperCaseChar = true
+		} else if char >= '0' && char <= '9' {
+			hasNumberChar = true
+		} else {
+			hasSpecialChar = true
+		}
+	}
+	return hasLowerCaseChar && hasUpperCaseChar && hasNumberChar && hasSpecialChar
+}

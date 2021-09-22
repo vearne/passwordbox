@@ -137,6 +137,10 @@ func main() {
 			Action: store.Quit,
 		},
 		{
+			Name:   "modifyDB",
+			Action: store.ModifyDBPassword,
+		},
+		{
 			Name: "help",
 			Action: func(cxt *cli.Context) error {
 				return cli.ShowAppHelp(cxt)
@@ -314,7 +318,7 @@ Tip: Type help for help.
 		cmd := cmdArgs[0]
 		if !utils.FindInSlice(cmd, []string{
 			"clear", "add", "delete", "quit",
-			"modify", "view", "search",
+			"modify", "view", "search", "modifyDB",
 			"backup", "restore", "help"}) {
 			fmt.Println("unknow command", cmd)
 			continue
