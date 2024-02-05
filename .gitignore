@@ -2,3 +2,4 @@
 pwbox
 *.gz
 .DS_Store
+vendor
