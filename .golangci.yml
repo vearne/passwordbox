@@ -6,7 +6,6 @@ linters:
     - govet         # Vet examines Go source code and reports suspicious constructs, such as Printf calls whose arguments do not align with the format string
     - ineffassign   # Detects when assignments to existing variables are not used
     - staticcheck   # Staticcheck is a go vet on steroids, applying a ton of static analysis checks
-    - unused
     - unused        # Checks Go code for unused constants, variables, functions and types
     - exportloopref
 
@@ -16,4 +15,5 @@ linters-settings:
     check-shadowing: true
     disable:
       - fieldalignment
+
 
