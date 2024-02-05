@@ -101,6 +101,17 @@ func main() {
 			},
 		},
 		{
+			Name:   "otp",
+			Usage:  "otp -itemId <itemId>",
+			Action: store.OtpItem,
+			Flags: []cli.Flag{
+				&cli.IntFlag{
+					Name:     "itemId",
+					Required: true,
+				},
+			},
+		},
+		{
 			Name:      "search",
 			Usage:     "search [-pageId <pageId>] [-keyword <keyword>]",
 			UsageText: "pageId/keyword is optional.",
@@ -318,7 +329,7 @@ Tip: Type help for help.
 		cmd := cmdArgs[0]
 		if !utils.FindInSlice(cmd, []string{
 			"clear", "add", "delete", "quit",
-			"modify", "view", "search", "modifyDB",
+			"modify", "view", "otp", "search", "modifyDB",
 			"backup", "restore", "help"}) {
 			fmt.Println("unknow command", cmd)
 			continue

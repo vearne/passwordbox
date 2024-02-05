@@ -10,6 +10,8 @@ import (
 	"github.com/AlecAivazis/survey/v2"
 	"github.com/fatih/color"
 	"github.com/olekukonko/tablewriter"
+	"github.com/pquerna/otp"
+	"github.com/pquerna/otp/totp"
 	"github.com/urfave/cli/v2"
 	"github.com/vearne/passwordbox/consts"
 	"github.com/vearne/passwordbox/model"
@@ -215,6 +217,39 @@ func ViewItem(c *cli.Context) error {
 	}
 	detailItem := ParseSimpleItem(item, GlobalStore.Key)
 	PrintItems([]*model.DetailItem{detailItem})
+	return nil
+}
+
+func OtpItem(c *cli.Context) error {
+	fmt.Println("--OtpItem--")
+	itemId := c.Int("itemId")
+	item, err := GetItem(GlobalStore.DB, itemId)
+	if err != nil {
+		fmt.Printf("can't find %v\n", itemId)
+		return nil
+	}
+	detailItem := ParseSimpleItem(item, GlobalStore.Key)
+	key, err := otp.NewKeyFromURL(detailItem.Password)
+	if err != nil {
+		fmt.Printf("failed to parse url %v\n", detailItem.Password)
+		return nil
+	}
+	switch key.Type() {
+	case "totp":
+		passcode, err := totp.GenerateCodeCustom(key.Secret(), time.Now(), totp.ValidateOpts{
+			Period:    uint(key.Period()),
+			Digits:    key.Digits(),
+			Algorithm: key.Algorithm(),
+		})
+		if err != nil {
+			slog.Error("generate code error, %v", err)
+			return err
+		}
+		detailItem.Password = passcode
+		PrintItems([]*model.DetailItem{detailItem})
+	default:
+		fmt.Printf("unsupported otp type %v\n", key.Type())
+	}
 	return nil
 }
 
