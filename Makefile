@@ -8,7 +8,7 @@ GITTAG = `git log -1 --pretty=format:"%H"`
 LDFLAGS = -ldflags "-s -w -X $(IMPORT_PATH)/consts.GitTag=${GITTAG} -X $(IMPORT_PATH)/consts.BuildTime=${BUILD_TIME} -X $(IMPORT_PATH)/consts.Version=${VERSION}"
 SOURCE_PATH = /go/src/github.com/vearne/passwordbox/
 
-.PHONY: build install release release-linux release-mac docker-img
+.PHONY: build install release release-linux release-mac docker-img xgo
 
 
 build:
@@ -32,4 +32,8 @@ release-mac:
 
 docker-img:
 	docker build --rm -t $(CONTAINER) -f Dockerfile.dev .
+
+xgo:
+	#xgo --targets=darwin/*  -out=./pwbox  .
+	xgo -out=./passwordbox  .
 
